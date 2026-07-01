@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { Generation } from '../types/generation';
-import { loadHistory, addToHistory, updateInHistory } from '../services/storage.service';
+import { loadHistory, addToHistory, updateInHistory, clearHistory } from '../services/storage.service';
 
 type HistoryState = {
   generations: Generation[];
@@ -35,6 +35,10 @@ export const markGenerationSaved = createAsyncThunk(
   },
 );
 
+export const clearAllHistory = createAsyncThunk('history/clear', async () => {
+  await clearHistory();
+});
+
 const historySlice = createSlice({
   name: 'history',
   initialState,
@@ -50,6 +54,9 @@ const historySlice = createSlice({
       })
       .addCase(markGenerationSaved.fulfilled, (state, action: PayloadAction<Generation[]>) => {
         state.generations = action.payload;
+      })
+      .addCase(clearAllHistory.fulfilled, (state) => {
+        state.generations = [];
       });
   },
 });

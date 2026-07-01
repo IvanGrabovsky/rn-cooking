@@ -31,3 +31,7 @@ export async function updateInHistory(
   await saveHistory(updated);
   return updated;
 }
+
+export async function clearHistory(): Promise<void> {
+  await saveHistory([]);
+}
