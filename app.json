@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "AI Image Prompt Generator",
-    "slug": "ai-image-prompt-generator",
+    "name": "Cooking Prompt Generator",
+    "slug": "cooking-prompt-generator",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

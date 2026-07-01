@@ -1,8 +1,4 @@
-import { generateText } from 'ai';
-import { createGoogleGenerativeAI } from '@ai-sdk/google';
-import { GEMINI_IMAGE_MODEL } from '../constants/api';
-
-// Gemini returns raw bytes; convert to a base64 data URI so React Native
+// HuggingFace returns raw bytes; convert to a base64 data URI so React Native
 // <Image> can render it without a network round-trip.
 function uint8ArrayToBase64(bytes: Uint8Array): string {
   let binary = '';
@@ -13,16 +9,30 @@ function uint8ArrayToBase64(bytes: Uint8Array): string {
 }
 
 export async function generateImage(prompt: string, apiKey: string): Promise<string> {
-  const google = createGoogleGenerativeAI({ apiKey });
+  const res = await fetch(
+    "https://router.huggingface.co/hf-inference/models/black-forest-labs/FLUX.1-schnell",
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        inputs: prompt,
+      }),
+    }
+  );
 
-  const result = await generateText({
-    model: google(GEMINI_IMAGE_MODEL),
-    prompt,
-  });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`HuggingFace error (${res.status}): ${text}`);
+  }
 
-  const imageFile = result.files?.find((f) => f.mediaType.startsWith('image/'));
-  if (!imageFile) throw new Error('No image returned by Gemini');
-
-  const base64 = uint8ArrayToBase64(imageFile.uint8Array);
-  return `data:${imageFile.mediaType};base64,${base64}`;
+  const arrayBuffer = await res.arrayBuffer();
+  const uint8Array = new Uint8Array(arrayBuffer);
+  
+  const contentType = res.headers.get('content-type') || 'image/jpeg';
+  const base64 = uint8ArrayToBase64(uint8Array);
+  
+  return `data:${contentType};base64,${base64}`;
 }

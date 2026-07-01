@@ -26,10 +26,10 @@
     "typescript": "~5.9.2"
   },
   "scripts": {
-    "start": "expo start --offline --host lan",
-    "android": "expo start --android --offline --host lan",
-    "ios": "expo start --ios --offline --host lan",
-    "web": "expo start --web --offline --host lan"
+    "start": "expo start --offline",
+    "android": "expo start --android --offline",
+    "ios": "expo start --ios --offline",
+    "web": "expo start --web --offline"
   },
   "private": true
 }

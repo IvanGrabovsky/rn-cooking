@@ -20,10 +20,11 @@ const initialState: GenerateState = {
 export const runGeneration = createAsyncThunk(
   'generate/run',
   async ({ idea, apiKey }: { idea: string; apiKey: string }, { dispatch }) => {
-    dispatch(setStatus('generatingPrompt'));
-    const prompt = await generatePrompt(idea, apiKey);
-
     dispatch(setStatus('generatingImage'));
+    
+    // FLUX.1 models are excellent at following short prompts, 
+    // so we can use the user's idea directly and skip text expansion!
+    const prompt = idea;
     const imageUrl = await generateImage(prompt, apiKey);
 
     const generation: Generation = {
